@@ -12,5 +12,10 @@ namespace Repository
     {
         public IncomeRepository(RepositoryContext context): base(context)
         { }
+
+        public IEnumerable<Income> GetAllIncomes(bool trackChanges)
+        {
+            return FindAll(trackChanges).OrderBy(or=>or.Date).ToList();
+        }
     }
 }

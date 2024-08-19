@@ -1,5 +1,7 @@
 ﻿using Contracts;
+using Entities.Models;
 using Service.Contracts;
+using Shared.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,21 @@ namespace Service
         {
             _repositoryManager = repositoryManager;
             _loggerManager = loggerManager;
+        }
+
+        public IEnumerable<IncomeDto> GetAllIncomes(bool trackChanges)
+        {
+            try
+            {
+                var incomes = _repositoryManager.income.GetAllIncomes(trackChanges);
+                var incomeDto = incomes.Select(se=> new IncomeDto ( se.IncomeId , se.Amount, se.Date, se.Description ));
+                return incomeDto;
+            }
+            catch (Exception ex) 
+            {
+                _loggerManager.LogError($"GetAllIncomes: _messages: {ex.Message}\n _stacktrace: {ex.StackTrace}");
+                throw;
+            }
         }
     }
 }
