@@ -1,4 +1,6 @@
-﻿using Contracts;
+﻿using AutoMapper;
+using Contracts;
+using Entities.Exceptions;
 using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -14,26 +16,32 @@ namespace Service
     {
         private IRepositoryManager _repositoryManager;
         private ILoggerManager _loggerManager;
+        private IMapper _mapper;
 
-        public IncomeService(IRepositoryManager repositoryManager, ILoggerManager loggerManager)
+        public IncomeService(IRepositoryManager repositoryManager, ILoggerManager loggerManager, IMapper mapper)
         {
             _repositoryManager = repositoryManager;
             _loggerManager = loggerManager;
+            _mapper = mapper;
         }
 
         public IEnumerable<IncomeDto> GetAllIncomes(bool trackChanges)
         {
-            try
+            var incomes = _repositoryManager.income.GetAllIncomes(trackChanges);
+            var incomeDto = _mapper.Map<IEnumerable<IncomeDto>>(incomes);
+            return incomeDto;
+           
+        }
+
+        public IncomeDto GetIncome(int IncomeId, bool trackChanges)
+        {
+            var income = _repositoryManager.income.GetIncome(IncomeId, trackChanges);
+            if(income is null)
             {
-                var incomes = _repositoryManager.income.GetAllIncomes(trackChanges);
-                var incomeDto = incomes.Select(se=> new IncomeDto ( se.IncomeId , se.Amount, se.Date, se.Description ));
-                return incomeDto;
+                throw new IncomeNotFoundException(IncomeId);
             }
-            catch (Exception ex) 
-            {
-                _loggerManager.LogError($"GetAllIncomes: _messages: {ex.Message}\n _stacktrace: {ex.StackTrace}");
-                throw;
-            }
+            var incomeDto = _mapper.Map<IncomeDto>(income);
+            return incomeDto;
         }
     }
 }

@@ -17,5 +17,10 @@ namespace Repository
         {
             return FindAll(trackChanges).OrderBy(or=>or.Date).ToList();
         }
+
+        public Income GetIncome(int id, bool trackChanges)
+        {
+            return FindByCondition(c => c.IncomeId == id, trackChanges).SingleOrDefault();
+        }
     }
 }

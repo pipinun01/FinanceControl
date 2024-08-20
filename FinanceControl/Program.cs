@@ -1,3 +1,4 @@
+using Contracts;
 using FinanceControl.Extensions;
 using NLog;
 namespace FinanceControl
@@ -16,10 +17,16 @@ namespace FinanceControl
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.ConfigureSqlContext(builder.Configuration);
+            builder.Services.ConfigureAutoMapper();
             builder.Services.AddControllers().AddApplicationPart(typeof(FinanceControl.Presentation.AssemblyReference).Assembly);
 
             var app = builder.Build();
-
+            var logger = app.Services.GetRequiredService<ILoggerManager>();
+            app.ConfigureExceptionHandler(logger);
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseHsts();
+            }
             // Configure the HTTP request pipeline.
 
             app.UseHttpsRedirection();

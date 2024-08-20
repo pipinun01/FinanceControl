@@ -21,15 +21,16 @@ namespace FinanceControl.Presentation.Controllers
         [HttpGet]
         public IActionResult GetIncomes()
         {
-            try
-            {
-                var incomes = _service.IncomeService.GetAllIncomes(trackChanges: false);
-                return Ok(incomes);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var incomes = _service.IncomeService.GetAllIncomes(trackChanges: false);
+            return Ok(incomes);
+           
+        }
+
+        [HttpGet("{id:int}")]
+        public IActionResult GetIncome(int id)
+        {
+                var income = _service.IncomeService.GetIncome(id, false);
+            return Ok(income);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Contracts
     public interface IIncomeRepository
     {
         IEnumerable<Income> GetAllIncomes(bool trackChanges);
+        Income GetIncome(int id, bool trackChanges);
     }
 }
